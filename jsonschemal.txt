@@ -1,0 +1,1 @@
+.template.json: http://json.schemastore.org/template
