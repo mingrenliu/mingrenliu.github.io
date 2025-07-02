@@ -1,1 +1,35 @@
-hello world !
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Pages Example</title>
+  </head>
+  <body>
+    <h1>GitHub Pages JSON Fetch Example</h1>
+
+    <!-- Element to display the JSON data -->
+    <div id="json-display"></div>
+
+    <script>
+      let d = ""
+      fetch("files/").then((response) => {
+        d = response.text()
+        console.log("Fetch successful:", d)
+      })
+      fetch("files/test.json")
+        .then((response) => response.json())
+        .then((data) => {
+          // Create a string to display the JSON data
+          const jsonData = JSON.stringify(data, null, 2) // Pretty-print with indentation
+          // Insert the JSON data into the HTML element
+          document.getElementById(
+            "json-display"
+          ).textContent = `${d}\n ${jsonData}`
+        })
+        .catch((error) => {
+          console.error("Error loading JSON file:", error)
+        })
+    </script>
+  </body>
+</html>
