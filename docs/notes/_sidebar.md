@@ -1,2 +1,2 @@
-* [首页](/notes/home.md.md)
-* [笔记example](/notes/example.md.md)
+* [首页](./home.md.md)
+* [笔记example](./example.md.md)

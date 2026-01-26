@@ -1,4 +1,4 @@
-* [首页](/configuration/home.md.md)
-* [配置example](/configuration/example.md.md)
+* [首页](./home.md.md)
+* [配置example](./example.md.md)
 
 
