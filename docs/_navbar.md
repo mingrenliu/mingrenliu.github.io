@@ -1,4 +1,4 @@
-* [Home](./_sidebar.md.md)
-* [Notes](./notes/_sidebar.md.md)
+* [Home](./_sidebar.md)
+* [Notes](./notes/_sidebar.md)
 
-* [Configuration](./configuration/_sidebar.md.md)
+* [Config](./config/_sidebar.md)

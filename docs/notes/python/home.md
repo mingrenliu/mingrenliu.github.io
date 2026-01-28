@@ -1,0 +1,1 @@
+## this directory is notes for python.

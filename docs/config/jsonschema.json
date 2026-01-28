@@ -1,0 +1,534 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "title": "IntegrationConfig",
+  "type": "object",
+  "description": "数据集成配置",
+  "additionalProperties": true,
+  "properties": {
+    "Key": {
+      "type": "string",
+      "description": "唯一键"
+    },
+    "Name": {
+      "type": "string",
+      "description": "数据集成配置名称"
+    },
+    "MapKey": {
+      "type": "string",
+      "description": "映射key"
+    },
+    "MapName": {
+      "type": "string",
+      "description": "映射配置名称"
+    },
+    "DateFormat": {
+      "type": "string",
+      "description": "日期格式"
+    },
+    "Description": {
+      "type": [ "string" ],
+      "description": "集成配置描述"
+    },
+    "Source": {
+      "description": "数据源",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/DataSource"
+        }
+      ]
+    },
+    "ApiSourceConfig": {
+      "description": "api配置源",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/ApiSource"
+        }
+      ]
+    },
+    "Duration": {
+      "type": "integer",
+      "description": "查询时间跨度(天)",
+      "format": "int32",
+      "default": 1
+    },
+    "DatabaseSourceConfig": {
+      "description": "数据库配置源",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/DatabaseSource"
+        }
+      ]
+    },
+
+    "MapModel": {
+      "description": "映射模式",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/MapModel"
+        }
+      ]
+    },
+    "MapConfig": {
+      "description": "映射配置",
+      "oneOf": [
+        {
+          "$ref": "#/definitions/MapConfig"
+        }
+      ]
+    },
+    "PropMaps": {
+      "type": "array",
+      "description": "属性映射(如物料名称映射等)",
+      "items": {
+        "$ref": "#/definitions/PropMap"
+      }
+    },
+    "JobSchedule": {
+      "description": "自动作业计划",
+      "pattern": "^\\s*($|#|\\w+\\s*=|(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?(?:,(?:[0-5]?\\d)(?:(?:-|\\/|\\,)(?:[0-5]?\\d))?)*)\\s+(\\?|\\*|(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?(?:,(?:[01]?\\d|2[0-3])(?:(?:-|\\/|\\,)(?:[01]?\\d|2[0-3]))?)*)\\s+(\\?|\\*|(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?(?:,(?:0?[1-9]|[12]\\d|3[01])(?:(?:-|\\/|\\,)(?:0?[1-9]|[12]\\d|3[01]))?)*)\\s+(\\?|\\*|(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?(?:,(?:[1-9]|1[012])(?:(?:-|\\/|\\,)(?:[1-9]|1[012]))?(?:L|W)?)*|\\?|\\*|(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?(?:,(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(?:(?:-)(?:JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC))?)*)\\s+(\\?|\\*|(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?(?:,(?:[0-6])(?:(?:-|\\/|\\,|#)(?:[0-6]))?(?:L)?)*|\\?|\\*|(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?(?:,(?:MON|TUE|WED|THU|FRI|SAT|SUN)(?:(?:-)(?:MON|TUE|WED|THU|FRI|SAT|SUN))?)*)(|\\s)+(\\?|\\*|(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?(?:,(?:|\\d{4})(?:(?:-|\\/|\\,)(?:|\\d{4}))?)*))$",
+      "type": "string"
+    }
+  },
+  "dependentRequired": {
+    "MapKey": ["MapName"]
+  },
+  "required": ["Key", "Name", "Source"],
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "Source": {
+            "const": "Api"
+          }
+        }
+      },
+      "then": {
+        "required": ["ApiSourceConfig","MapModel", "MapConfig"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "Source": {
+            "const": "Database"
+          }
+        }
+      },
+      "then": {
+        "required": ["DatabaseSourceConfig","MapModel", "MapConfig"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "MapModel": {
+            "const": "Table"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "MapConfig": {
+            "required": ["ConnectString", "DBType"]
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "ParaModel": {
+      "type": "object",
+      "description": "参数模型",
+      "additionalProperties": false,
+      "properties": {
+        "ParaName": {
+          "type": "string",
+          "description": "值",
+          "enum": ["ConfigurationGetter", "JHTokenGetter"]
+        },
+        "IsRequired": {
+          "type": "boolean",
+          "description": "是否必须"
+        },
+        "Args": {
+          "type": "string",
+          "description": "参数"
+        }
+      },
+      "required": ["ParaName"]
+    },
+    "RequestParameter": {
+      "type": "object",
+      "description": "参数请求模型",
+      "anyOf": [
+        { "$ref": "#/definitions/ApiSource" },
+        {
+          "properties": {
+            "IsRequired": {
+              "type": "boolean",
+              "description": "是否必须"
+            }
+          }
+        }
+      ]
+    },
+    "DataSource": {
+      "type": "string",
+      "description": "数据源",
+      "enum": ["Api", "Database","Other"]
+    },
+    "ApiSource": {
+      "type": "object",
+      "description": "api数据源",
+      "additionalProperties": false,
+      "properties": {
+        "Url": {
+          "type": "string",
+          "description": "api url"
+        },
+        "RequestMethod": {
+          "description": "请求方法",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/HttpMethod"
+            }
+          ]
+        },
+        "Data": {
+          "type": [ "string" ],
+          "description": "Json数据"
+        },
+        "FormData": {
+          "type": [ "object" ],
+          "description": "表单数据",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "Header": {
+          "type": [ "object" ],
+          "description": "请求头数据",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "ResponseDataKey": {
+          "type": [ "string" ],
+          "description": "相应数据字段"
+        },
+        "ResponseHook": {
+          "type": [ "string" ],
+          "description": "响应数据处理钩子函数名",
+          "enum": [ "DefaultResponseHook", "JHResponseHook" ]
+        },
+        "MultiParameters": {
+          "type": "object",
+          "description": "多值参数",
+          "$ref": "#/definitions/MultiParameterItem"
+        },
+        "ParametersGetter": {
+          "type": [ "object" ],
+          "description": "动态参数Getter方法",
+          "patternProperties": {
+            ".*": {
+              "type": [ "object" ],
+              "description": "Getter方法",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/ParaModel"
+                }
+              ]
+            }
+          },
+          "additionalProperties": false
+        },
+        "DynamicParameters": {
+          "type": [ "object" ],
+          "description": "动态参数",
+          "additionalProperties": false,
+          "patternProperties": {
+            ".*": {
+              "type": "object",
+              "description": "动态参数请求配置",
+              "oneOf": [
+                {
+                  "$ref": "#/definitions/RequestParameter"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "required": ["Url", "RequestMethod"]
+    },
+    "HttpMethod": {
+      "type": "string",
+      "description": "请求方法",
+      "enum": ["Post", "Get"]
+    },
+    "MultiParameterItem":{
+      "type":"object",
+      "description": "多值参数",
+      "additionalProperties": false,
+      "properties": {
+        "Key": {
+          "type": "string",
+          "description": "键（参数名称）"
+        },
+        "Values": {
+          "type": "array",
+          "description": "多值参数列表",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    },
+    "DatabaseSource": {
+      "type": "object",
+      "description": "数据库数据源",
+      "additionalProperties": false,
+      "properties": {
+        "ConnectString": {
+          "type": "string",
+          "description": "连接字符串"
+        },
+        "DBType": {
+          "description": "数据库类型",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DBType"
+            }
+          ]
+        },
+        "TableName": {
+          "type": ["string"],
+          "description": "表名"
+        },
+        "RawSql": {
+          "type": ["string"],
+          "description": "原始Sql"
+        },
+        "QueryCondition": {
+          "type": "array",
+          "description": "查询条件",
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/QueryCondition"
+            }
+          }
+        }
+      },
+      "required": ["ConnectString", "DBType"],
+      "anyOf": [
+        {
+          "required": ["TableName", "QueryCondition"]
+        },
+        {
+          "required": ["RawSql"]
+        }
+      ]
+    },
+    "DBType": {
+      "type": "string",
+      "description": "数据库类型",
+      "enum": ["MySql", "Oracle", "SqlServer"]
+    },
+    "QueryCondition": {
+      "type": "object",
+      "description": "查询条件",
+      "additionalProperties": false,
+      "properties": {
+        "Field": {
+          "type": "string",
+          "description": "字段名称"
+        },
+        "Operation": {
+          "description": "操作符",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/Operation"
+            }
+          ]
+        },
+        "Value": {
+          "type": "string",
+          "description": "值"
+        },
+        "Type": {
+          "type": "string",
+          "description": "数据类型",
+          "enum": ["Undefined", "Number", "DateTime", "Boolean", "String"]
+        },
+        "LinkModel": {
+          "description": "查询条件连接方式",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/LinkModel"
+            }
+          ]
+        }
+      },
+      "required": ["Field", "Operation", "Value", "LinkModel"]
+    },
+    "Operation": {
+      "type": "string",
+      "description": "操作符",
+      "enum": [
+        "In",
+        "NotIn",
+        "eq",
+        "ne",
+        "gt",
+        "lt",
+        "ge",
+        "le",
+        "like",
+        "startWith",
+        "endWith",
+        "openInterval",
+        "closedInterval",
+        "leftOpenInterval",
+        "rightOpenInterval"
+      ]
+    },
+    "LinkModel": {
+      "type": "string",
+      "description": "链接模式",
+      "enum": ["And", "Or"]
+    },
+    "MapModel": {
+      "type": "string",
+      "description": "映射模式",
+      "enum": ["Model", "Table"]
+    },
+    "MapConfig": {
+      "type": "object",
+      "description": "映射配置",
+      "additionalProperties": false,
+      "properties": {
+        "MapName": {
+          "type": "string",
+          "description": "要映射的名称"
+        },
+        "ConnectString": {
+          "type": ["string"],
+          "description": "连接字符串"
+        },
+        "DBType": {
+          "description": "数据库类型",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/DBType"
+            }
+          ]
+        },
+        "UniqueKey": {
+          "type": "string",
+          "description": "源数据唯一键映射的字段名"
+        },
+        "PrimaryKey": {
+          "type": ["string"],
+          "description": "主键名"
+        },
+        "SourceName": {
+          "type": ["string"],
+          "description": "来源标识映射字段"
+        },
+        "FieldMaps": {
+          "type": "array",
+          "description": "字段映射",
+          "items": {
+            "$ref": "#/definitions/FieldMap"
+          }
+        }
+      },
+      "required": ["MapName", "UniqueKey", "FieldMaps"]
+    },
+    "FieldMap": {
+      "type": "object",
+      "description": "字段映射",
+      "additionalProperties": false,
+      "properties": {
+        "FromName": {
+          "type": ["string"],
+          "description": "来源名称"
+        },
+        "FromType": {
+          "description": "来源字段类型",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/FieldType"
+            }
+          ]
+        },
+        "ToName": {
+          "type": "string",
+          "description": "要映射的名称"
+        },
+        "Name": {
+          "type": "string",
+          "description": "展示名称"
+        },
+        "Expression": {
+          "type": ["string"],
+          "description": "计算公式"
+        },
+        "Description": {
+          "type": ["string"],
+          "description": "描述"
+        }
+      },
+      "required": ["ToName", "Name"],
+      "anyOf": [
+        {
+          "required": ["Expression"]
+        },
+        {
+          "required": ["FromName"]
+        }
+      ]
+    },
+    "FieldType": {
+      "type": "string",
+      "description": "支持的字段数据类型",
+      "enum": [
+        "Undefined",
+        "Int",
+        "Long",
+        "Float",
+        "Double",
+        "Decimal",
+        "DateTime",
+        "Boolean",
+        "String"
+      ]
+    },
+    "PropMap": {
+      "type": "object",
+      "description": "属性映射",
+      "additionalProperties": false,
+      "properties": {
+        "FromName": {
+          "type": "string",
+          "description": "源属性名称"
+        },
+        "ToName": {
+          "type": "string",
+          "description": "映射的属性"
+        },
+        "Name": {
+          "type": "string",
+          "description": "配置描述（配置页面展示名称）"
+        },
+        "Key": {
+          "type": "string",
+          "description": "映射的唯一键"
+        }
+      },
+      "required": ["FromName", "ToName", "Name", "Key"]
+    }
+  }
+}

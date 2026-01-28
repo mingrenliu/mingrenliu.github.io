@@ -1,1 +1,1 @@
-# .net notes first page
+## this directory is notes for .net.

@@ -14,11 +14,15 @@
   <div id="app"></div>
   <script>
     window.$docsify = {
-      ext: '',
+      ext: '.md',
       homepage: '_sidebar.md',
       loadSidebar: "_sidebar.md",
       loadNavbar: "_navbar.md",
+      alias:{
+        '/(.*)\\.json\\.md$': '/$1.json',
+      },
       autoHeader: true,
+      subMaxLevel: 3,
       relativePath: true,
       repo: "https://github.com/mingrenliu/mingrenliu.github.io/tree/master/docs",
       notFoundPage: false,

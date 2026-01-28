@@ -1,3 +1,4 @@
-* [Up](../_sidebar.md.md)
-* [Home](./_sidebar.md.md)
-* [.net](./net/_sidebar.md.md)
+* [Up](../_sidebar.md)
+* [Home](./_sidebar.md)
+* [.net](./net/_sidebar.md)
+* [python](./python/_sidebar.md)
